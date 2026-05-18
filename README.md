@@ -43,7 +43,7 @@ Open the Android Files app, then go to:
 Downloads/AudioDashcam/<timestamp>_last-<duration>s/
 ```
 
-Each save contains exactly one audio file plus `manifest.json`: normally `audio_float32le_mono_48000.wav`, or `audio_float32le_mono_48000.raw` for very large saves.
+Each save folder and its files share the same timestamp prefix. By default the folder contains `<timestamp>_audio_float32le_mono_48000.wav`. Very large saves fall back to `<timestamp>_audio_float32le_mono_48000.raw` plus the sidecar metadata file `<timestamp>_audio_float32le_mono_48000.json`.
 
 
 ## Importing the raw file

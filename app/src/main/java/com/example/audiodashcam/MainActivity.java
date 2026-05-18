@@ -104,7 +104,7 @@ public class MainActivity extends Activity {
         }
 
         TextView note = new TextView(this);
-        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Each save contains exactly one audio file: .wav by default, or .raw only if the save is too large for standard WAV.");
+        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Folder and file names include the same timestamp. Each save is one .wav by default. Very large saves fall back to .raw plus a matching .json sidecar.");
         root.addView(note);
 
         setContentView(scroll);

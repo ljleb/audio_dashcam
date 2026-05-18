@@ -40,4 +40,4 @@ After pressing a save button in the app, open:
 Files app > Downloads > AudioDashcam
 ```
 
-Each save has its own timestamped folder containing exactly one audio file plus `manifest.json`: `.wav` by default, `.raw` only when the save is too large for standard WAV.
+Each save has its own timestamped folder, and the files in that folder use the same timestamp prefix. By default it contains `<timestamp>_audio_float32le_mono_48000.wav`. Very large saves fall back to `<timestamp>_audio_float32le_mono_48000.raw` plus `<timestamp>_audio_float32le_mono_48000.json`.
