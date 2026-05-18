@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -44,7 +45,11 @@ public class RecorderService extends Service {
 
     private void startForegroundServiceWork() {
         createNotificationChannel();
-        startForeground(1, buildNotification("Recording rolling audio buffer"));
+        startForeground(
+                1,
+                buildNotification("Recording rolling audio buffer"),
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+        );
 
         if (!running) {
             try {
@@ -64,6 +69,7 @@ public class RecorderService extends Service {
             if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 lastStatus = "Missing microphone permission";
                 running = false;
+                stopSelf();
                 return;
             }
 
@@ -97,6 +103,8 @@ public class RecorderService extends Service {
                 }
             } catch (Exception e) {
                 lastStatus = "Recording error: " + e.getMessage();
+                running = false;
+                stopSelf();
             } finally {
                 try { recorder.stop(); } catch (Exception ignored) {}
                 recorder.release();
@@ -130,6 +138,10 @@ public class RecorderService extends Service {
 
     public long availableSeconds() {
         return ring == null ? 0 : ring.availableSeconds();
+    }
+
+    public boolean isRecording() {
+        return running;
     }
 
     public String status() {

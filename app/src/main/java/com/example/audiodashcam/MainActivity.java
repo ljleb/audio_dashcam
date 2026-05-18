@@ -22,19 +22,35 @@ public class MainActivity extends Activity {
     private static final int REQ_PERMS = 7;
     private RecorderService service;
     private boolean bound = false;
+    private boolean startPending = false;
+    private boolean userStopped = false;
+    private Button recordToggle;
     private TextView status;
 
     private final ServiceConnection conn = new ServiceConnection() {
         @Override public void onServiceConnected(ComponentName name, IBinder binder) {
             service = ((RecorderService.LocalBinder) binder).service();
             bound = true;
+            startPending = false;
+            userStopped = false;
             updateStatus();
+            updateRecordingToggle();
         }
 
         @Override public void onServiceDisconnected(ComponentName name) {
+            boolean failedWhileStarting = startPending;
+            boolean stoppedByUser = userStopped;
             bound = false;
             service = null;
-            updateStatus();
+            startPending = false;
+            userStopped = false;
+
+            if (failedWhileStarting) {
+                updateStatusText("Recording failed to start.");
+            } else if (!stoppedByUser) {
+                updateStatusText("Recording stopped.");
+            }
+            updateRecordingToggle();
         }
     };
 
@@ -63,18 +79,10 @@ public class MainActivity extends Activity {
         subtitle.setPadding(0, 12, 0, 24);
         root.addView(subtitle);
 
-        Button start = new Button(this);
-        start.setText("Start / Resume Recording");
-        start.setOnClickListener(v -> startRecorder());
-        root.addView(start);
-
-        Button stop = new Button(this);
-        stop.setText("Stop Recording");
-        stop.setOnClickListener(v -> {
-            stopService(new Intent(this, RecorderService.class));
-            updateStatusText("Stopped");
-        });
-        root.addView(stop);
+        recordToggle = new Button(this);
+        recordToggle.setText("Start Recording");
+        recordToggle.setOnClickListener(v -> toggleRecorder());
+        root.addView(recordToggle);
 
         status = new TextView(this);
         status.setText("Idle");
@@ -104,10 +112,11 @@ public class MainActivity extends Activity {
         }
 
         TextView note = new TextView(this);
-        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Folder and file names include the same timestamp. Each save is one .wav by default. Very large saves fall back to .raw plus a matching .json sidecar.");
+        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Folder and file names include the same timestamp. Each recording start begins a fresh circular-buffer session. Each save is one .wav by default. Very large saves fall back to .raw plus a matching .json sidecar.");
         root.addView(note);
 
         setContentView(scroll);
+        updateRecordingToggle();
     }
 
     private void requestPermissionsIfNeeded() {
@@ -146,10 +155,34 @@ public class MainActivity extends Activity {
             return;
         }
 
+        userStopped = false;
+        startPending = true;
         Intent intent = new Intent(this, RecorderService.class);
         startForegroundService(intent);
-        bindService(intent, conn, Context.BIND_AUTO_CREATE);
-        updateStatusText("Starting...");
+        if (!bindService(intent, conn, Context.BIND_AUTO_CREATE)) {
+            startPending = false;
+            updateStatusText("Recorder service failed to bind.");
+            updateRecordingToggle();
+            return;
+        }
+        updateStatusText("Recording...");
+        updateRecordingToggle();
+    }
+
+    private void stopRecorder() {
+        userStopped = true;
+        startPending = false;
+        stopService(new Intent(this, RecorderService.class));
+        updateStatusText("Stopped. The next start begins a fresh buffer.");
+        updateRecordingToggle();
+    }
+
+    private void toggleRecorder() {
+        if (bound && service != null && service.isRecording()) {
+            stopRecorder();
+        } else if (!startPending) {
+            startRecorder();
+        }
     }
 
     private void save(long seconds) {
@@ -165,6 +198,29 @@ public class MainActivity extends Activity {
     private void updateStatus() {
         if (bound && service != null) updateStatusText(service.status());
         else updateStatusText("Not bound");
+    }
+
+    private void updateRecordingToggle() {
+        if (recordToggle == null) return;
+
+        if (startPending) {
+            recordToggle.setEnabled(false);
+            recordToggle.setText("Recording...");
+            return;
+        }
+
+        if (userStopped) {
+            recordToggle.setEnabled(false);
+            recordToggle.setText("Stopped.");
+            return;
+        }
+
+        recordToggle.setEnabled(true);
+        if (bound && service != null && service.isRecording()) {
+            recordToggle.setText("Stop Recording");
+        } else {
+            recordToggle.setText("Start Recording");
+        }
     }
 
     private void updateStatusText(String s) {

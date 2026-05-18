@@ -45,6 +45,8 @@ Downloads/AudioDashcam/<timestamp>_last-<duration>s/
 
 Each save folder and its files share the same timestamp prefix. By default the folder contains `<timestamp>_audio_float32le_mono_48000.wav`. Very large saves fall back to `<timestamp>_audio_float32le_mono_48000.raw` plus the sidecar metadata file `<timestamp>_audio_float32le_mono_48000.json`.
 
+Stopping recording ends the current circular-buffer session. Starting again begins a fresh session, so future saves include only audio recorded since the latest start. If you request more audio than is currently buffered, the export is clamped to the available duration.
+
 
 ## Importing the raw file
 
