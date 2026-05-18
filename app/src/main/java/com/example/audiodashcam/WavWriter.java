@@ -2,6 +2,7 @@ package com.example.audiodashcam;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
 final class WavWriter implements AutoCloseable {
@@ -27,6 +28,32 @@ final class WavWriter implements AutoCloseable {
         raf.close();
     }
 
+    static void writeHeader(OutputStream out, int sampleRate, int channels, int bitsPerSample,
+                            boolean ieeeFloat, long dataLen) throws IOException {
+        if (dataLen > 0xFFFFFFFFL - 44) {
+            throw new IOException("Standard WAV cannot exceed ~4 GiB. Export smaller chunks.");
+        }
+
+        int audioFormat = ieeeFloat ? 3 : 1; // 3 = IEEE float, 1 = PCM integer
+        int byteRate = sampleRate * channels * bitsPerSample / 8;
+        int blockAlign = channels * bitsPerSample / 8;
+        long riffSize = 36 + dataLen;
+
+        out.write(new byte[]{ 'R', 'I', 'F', 'F' });
+        writeLE32(out, (int) riffSize);
+        out.write(new byte[]{ 'W', 'A', 'V', 'E' });
+        out.write(new byte[]{ 'f', 'm', 't', ' ' });
+        writeLE32(out, 16);
+        writeLE16(out, audioFormat);
+        writeLE16(out, channels);
+        writeLE32(out, sampleRate);
+        writeLE32(out, byteRate);
+        writeLE16(out, blockAlign);
+        writeLE16(out, bitsPerSample);
+        out.write(new byte[]{ 'd', 'a', 't', 'a' });
+        writeLE32(out, (int) dataLen);
+    }
+
     private void writeHeader(int sampleRate, int channels, int bitsPerSample, boolean ieeeFloat, long dataLen) throws IOException {
         if (dataLen > 0xFFFFFFFFL - 44) {
             throw new IOException("Standard WAV cannot exceed ~4 GiB. Export smaller chunks.");
@@ -50,6 +77,18 @@ final class WavWriter implements AutoCloseable {
         writeLE16(bitsPerSample);
         raf.writeBytes("data");
         writeLE32((int) dataLen);
+    }
+
+    private static void writeLE16(OutputStream out, int v) throws IOException {
+        out.write(v & 0xff);
+        out.write((v >>> 8) & 0xff);
+    }
+
+    private static void writeLE32(OutputStream out, int v) throws IOException {
+        out.write(v & 0xff);
+        out.write((v >>> 8) & 0xff);
+        out.write((v >>> 16) & 0xff);
+        out.write((v >>> 24) & 0xff);
     }
 
     private void writeLE16(int v) throws IOException {

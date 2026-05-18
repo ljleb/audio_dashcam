@@ -12,7 +12,6 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 
 import java.io.File;
@@ -116,10 +115,12 @@ public class RecorderService extends Service {
 
         exportExecutor.execute(() -> {
             try {
-                File savedRoot = new File(getExternalFilesDir(null), "saved");
-                File out = r.exportLastSeconds(savedRoot, seconds);
-                lastStatus = "Saved to " + out.getAbsolutePath();
-                callback.done(true, out.getAbsolutePath());
+                String publishedPath = r.exportLastSeconds(
+                        sessionName -> FilePublisher.openDownloadsSession(this, sessionName),
+                        seconds
+                );
+                lastStatus = "Saved to " + publishedPath;
+                callback.done(true, publishedPath);
             } catch (IOException e) {
                 lastStatus = "Save failed: " + e.getMessage();
                 callback.done(false, e.getMessage());
@@ -132,7 +133,7 @@ public class RecorderService extends Service {
     }
 
     public String status() {
-        return lastStatus + " · buffered " + availableSeconds() + "s";
+        return lastStatus + " - buffered " + availableSeconds() + "s";
     }
 
     @Override public void onDestroy() {
@@ -147,10 +148,7 @@ public class RecorderService extends Service {
 
     private Notification buildNotification(String text) {
         Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(
-                this, 0, intent,
-                Build.VERSION.SDK_INT >= 23 ? PendingIntent.FLAG_IMMUTABLE : 0
-        );
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         return new Notification.Builder(this, CHANNEL_ID)
                 .setContentTitle("Audio Dashcam")
@@ -162,15 +160,13 @@ public class RecorderService extends Service {
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Recording",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager nm = getSystemService(NotificationManager.class);
-            nm.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Recording",
+                NotificationManager.IMPORTANCE_LOW
+        );
+        NotificationManager nm = getSystemService(NotificationManager.class);
+        nm.createNotificationChannel(channel);
     }
 
     public interface SaveCallback {

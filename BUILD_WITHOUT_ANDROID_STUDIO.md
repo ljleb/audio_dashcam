@@ -26,6 +26,7 @@ This project includes a GitHub Actions workflow that can build the APK in the cl
 ## Notes
 
 - This is a debug APK, not a Play Store release.
+- This build requires Android 16 / API 36 or newer.
 - Android may show warnings because the APK is not from the Play Store.
 - The app uses a foreground microphone service, so Android should show a persistent notification and microphone privacy indicator.
 - The app preallocates about 5.15 GiB for the 8-hour float32 mono buffer.
@@ -36,7 +37,7 @@ This project includes a GitHub Actions workflow that can build the APK in the cl
 After pressing a save button in the app, open:
 
 ```text
-Files app → Downloads → AudioDashcam
+Files app > Downloads > AudioDashcam
 ```
 
 Each save has its own timestamped folder containing exactly one audio file plus `manifest.json`: `.wav` by default, `.raw` only when the save is too large for standard WAV.

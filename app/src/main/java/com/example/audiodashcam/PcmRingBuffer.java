@@ -1,12 +1,12 @@
 package com.example.audiodashcam;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -28,6 +28,17 @@ final class PcmRingBuffer {
 
     private long totalBytesWritten = 0;
     private long writePos = 0;
+
+    interface ExportSession extends AutoCloseable {
+        OutputStream openFile(String fileName, String mimeType) throws IOException;
+        void commit() throws IOException;
+        String locationDescription();
+        @Override void close() throws IOException;
+    }
+
+    interface ExportSessionFactory {
+        ExportSession open(String sessionName) throws IOException;
+    }
 
     PcmRingBuffer(File dir, long capacitySeconds) throws IOException {
         if (!dir.exists() && !dir.mkdirs()) throw new IOException("Could not create " + dir);
@@ -68,60 +79,59 @@ final class PcmRingBuffer {
         return availableBytes / (SAMPLE_RATE * BYTES_PER_FRAME);
     }
 
-    synchronized File exportLastSeconds(File outRoot, long requestedSeconds) throws IOException {
+    synchronized String exportLastSeconds(ExportSessionFactory sessionFactory, long requestedSeconds) throws IOException {
         long available = availableSeconds();
         long seconds = Math.min(requestedSeconds, available);
         if (seconds <= 0) throw new IOException("No audio available yet.");
 
-        String stamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(new Date());
-        File outDir = new File(outRoot, stamp + "_last-" + seconds + "s");
-        if (!outDir.exists() && !outDir.mkdirs()) throw new IOException("Could not create " + outDir);
-
+        String sessionName = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(new Date())
+                + "_last-" + seconds + "s";
         long dataBytes = seconds * SAMPLE_RATE * BYTES_PER_FRAME;
         long absoluteStartByte = totalBytesWritten - dataBytes;
         byte[] copyBuffer = new byte[1024 * 1024];
 
-        String audioFileName;
-        String container;
+        try (ExportSession session = sessionFactory.open(sessionName)) {
+            String audioFileName;
+            String container;
 
-        if (dataBytes <= MAX_STANDARD_WAV_DATA_BYTES) {
-            // Default path: one WAV file. This stores the same float32 PCM data with only a small header.
-            audioFileName = "audio_float32le_mono_48000.wav";
-            container = "wav";
-            File wav = new File(outDir, audioFileName);
-            try (WavWriter writer = new WavWriter(wav, SAMPLE_RATE, CHANNELS, 32, true)) {
-                copyLogicalRangeToWav(absoluteStartByte, dataBytes, copyBuffer, writer);
+            if (dataBytes <= MAX_STANDARD_WAV_DATA_BYTES) {
+                // Default path: one WAV file. This stores the same float32 PCM data with only a small header.
+                audioFileName = "audio_float32le_mono_48000.wav";
+                container = "wav";
+                try (OutputStream out = session.openFile(audioFileName, "audio/wav")) {
+                    WavWriter.writeHeader(out, SAMPLE_RATE, CHANNELS, 32, true, dataBytes);
+                    copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
+                }
+            } else {
+                // Fallback path: one raw file, because standard WAV cannot represent this much data.
+                audioFileName = "audio_float32le_mono_48000.raw";
+                container = "raw";
+                try (OutputStream out = session.openFile(audioFileName, "application/octet-stream")) {
+                    copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
+                }
             }
-        } else {
-            // Fallback path: one raw file, because standard WAV cannot represent this much data.
-            audioFileName = "audio_float32le_mono_48000.raw";
-            container = "raw";
-            File raw = new File(outDir, audioFileName);
-            try (OutputStream out = new FileOutputStream(raw)) {
-                copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
+
+            String json = "{\n" +
+                    "  \"container\": \"" + container + "\",\n" +
+                    "  \"audioFile\": \"" + audioFileName + "\",\n" +
+                    "  \"sampleRate\": 48000,\n" +
+                    "  \"channels\": 1,\n" +
+                    "  \"sampleFormat\": \"float32\",\n" +
+                    "  \"endianness\": \"little\",\n" +
+                    "  \"bytesPerSample\": 4,\n" +
+                    "  \"bytesPerFrame\": 4,\n" +
+                    "  \"durationSeconds\": " + seconds + ",\n" +
+                    "  \"dataBytes\": " + dataBytes + ",\n" +
+                    "  \"note\": \"Exactly one audio payload is written. WAV is used when standard WAV can fit the data; otherwise raw PCM is used.\"\n" +
+                    "}\n";
+
+            try (OutputStream manifest = session.openFile("manifest.json", "application/json")) {
+                manifest.write(json.getBytes(StandardCharsets.UTF_8));
             }
+
+            session.commit();
+            return session.locationDescription();
         }
-
-        File manifest = new File(outDir, "manifest.json");
-        String json = "{\n" +
-                "  \"container\": \"" + container + "\",\n" +
-                "  \"audioFile\": \"" + audioFileName + "\",\n" +
-                "  \"sampleRate\": 48000,\n" +
-                "  \"channels\": 1,\n" +
-                "  \"sampleFormat\": \"float32\",\n" +
-                "  \"endianness\": \"little\",\n" +
-                "  \"bytesPerSample\": 4,\n" +
-                "  \"bytesPerFrame\": 4,\n" +
-                "  \"durationSeconds\": " + seconds + ",\n" +
-                "  \"dataBytes\": " + dataBytes + ",\n" +
-                "  \"note\": \"Exactly one audio payload is written. WAV is used when standard WAV can fit the data; otherwise raw PCM is used.\"\n" +
-                "}\n";
-
-        try (OutputStream m = new FileOutputStream(manifest)) {
-            m.write(json.getBytes("UTF-8"));
-        }
-
-        return outDir;
     }
 
     private void copyLogicalRangeToStream(long absoluteStartByte, long bytes, byte[] buf, OutputStream out) throws IOException {
@@ -133,19 +143,6 @@ final class PcmRingBuffer {
             raf.seek(pos);
             raf.readFully(buf, 0, n);
             out.write(buf, 0, n);
-            copied += n;
-        }
-    }
-
-    private void copyLogicalRangeToWav(long absoluteStartByte, long bytes, byte[] buf, WavWriter writer) throws IOException {
-        long copied = 0;
-        while (copied < bytes) {
-            long logical = absoluteStartByte + copied;
-            long pos = mod(logical, capacityBytes);
-            int n = (int) Math.min(Math.min(buf.length, bytes - copied), capacityBytes - pos);
-            raf.seek(pos);
-            raf.readFully(buf, 0, n);
-            writer.write(buf, 0, n);
             copied += n;
         }
     }

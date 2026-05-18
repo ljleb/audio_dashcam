@@ -6,17 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import android.app.Activity;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     private static final int REQ_PERMS = 7;
@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
         root.addView(title);
 
         TextView subtitle = new TextView(this);
-        subtitle.setText("48 kHz · mono · float32 PCM · 8h circular buffer");
+        subtitle.setText("48 kHz - mono - float32 PCM - 8h circular buffer");
         subtitle.setGravity(Gravity.CENTER_HORIZONTAL);
         subtitle.setPadding(0, 12, 0, 24);
         root.addView(subtitle);
@@ -111,24 +111,32 @@ public class MainActivity extends Activity {
     }
 
     private void requestPermissionsIfNeeded() {
-        if (Build.VERSION.SDK_INT >= 33) {
-            requestPermissions(new String[]{
-                    Manifest.permission.RECORD_AUDIO,
-                    Manifest.permission.POST_NOTIFICATIONS
-            }, REQ_PERMS);
-        } else if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{ Manifest.permission.RECORD_AUDIO }, REQ_PERMS);
-        } else {
-            startRecorder();
+        ArrayList<String> missing = new ArrayList<>();
+
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            missing.add(Manifest.permission.RECORD_AUDIO);
         }
+        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            missing.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+
+        if (missing.isEmpty()) {
+            startRecorder();
+            return;
+        }
+
+        requestPermissions(missing.toArray(new String[0]), REQ_PERMS);
     }
 
     @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_PERMS && checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            startRecorder();
-        } else {
-            updateStatusText("Microphone permission is required.");
+
+        if (requestCode == REQ_PERMS) {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                startRecorder();
+            } else {
+                updateStatusText("Microphone permission is required.");
+            }
         }
     }
 
@@ -139,8 +147,7 @@ public class MainActivity extends Activity {
         }
 
         Intent intent = new Intent(this, RecorderService.class);
-        if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent);
-        else startService(intent);
+        startForegroundService(intent);
         bindService(intent, conn, Context.BIND_AUTO_CREATE);
         updateStatusText("Starting...");
     }

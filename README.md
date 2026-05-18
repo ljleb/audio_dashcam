@@ -5,11 +5,12 @@ Minimal Android app that records a perpetual rolling audio buffer.
 ## Current behavior
 
 - Android native Java app.
+- Requires Android 16 / API 36 or newer.
 - Foreground microphone service.
 - 48 kHz mono float32 PCM.
 - Preallocated 8-hour circular buffer.
 - Approximate ring size: 5.15 GiB.
-- Save buttons for 5s, 15s, 30s, 1m, 5m, 15m, 30m, 1h, 5h, 8h.
+- Save buttons for 5s, 15s, 30s, 1m, 5m, 15m, 30m, 1h, 4h, 8h.
 - Saves exactly one audio payload to public Downloads/AudioDashcam via MediaStore.
 - Uses one float32 WAV by default.
 - Falls back to one raw float32 file only when the save is too large for standard WAV.
@@ -24,7 +25,7 @@ Open this folder in Android Studio and run on a physical Android device.
 - It writes a large preallocated file under internal app storage.
 - Android must show an active microphone/privacy indicator and foreground-service notification.
 - Some devices may reject `MediaRecorder.AudioSource.UNPROCESSED`; if that happens, change it to `MediaRecorder.AudioSource.MIC`.
-- Android 14+ requires foreground service type declarations and permissions for microphone services.
+- This build assumes Android 16 / API 36+, so older-platform compatibility code has been removed.
 
 ## Files
 
