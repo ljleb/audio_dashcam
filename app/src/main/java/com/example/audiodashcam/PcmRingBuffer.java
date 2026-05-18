@@ -1,7 +1,9 @@
 package com.example.audiodashcam;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -16,6 +18,9 @@ final class PcmRingBuffer {
     static final int BYTES_PER_FRAME = CHANNELS * BYTES_PER_SAMPLE;
     static final long DEFAULT_CAPACITY_SECONDS = 8L * 60L * 60L;
     static final long DEFAULT_CAPACITY_BYTES = DEFAULT_CAPACITY_SECONDS * SAMPLE_RATE * BYTES_PER_FRAME;
+
+    // Standard RIFF/WAV has 32-bit size fields. Stay comfortably below 4 GiB.
+    private static final long MAX_STANDARD_WAV_DATA_BYTES = 0xFFFFFFFFL - 128L;
 
     private final File ringFile;
     private final RandomAccessFile raf;
@@ -72,38 +77,64 @@ final class PcmRingBuffer {
         File outDir = new File(outRoot, stamp + "_last-" + seconds + "s");
         if (!outDir.exists() && !outDir.mkdirs()) throw new IOException("Could not create " + outDir);
 
-        // Split into <= 1h WAVs. This avoids the RIFF/WAV 4 GiB limit and keeps files easy to handle.
-        long remainingSeconds = seconds;
-        long absoluteEndByte = totalBytesWritten;
-        long absoluteStartByte = totalBytesWritten - seconds * SAMPLE_RATE * BYTES_PER_FRAME;
+        long dataBytes = seconds * SAMPLE_RATE * BYTES_PER_FRAME;
+        long absoluteStartByte = totalBytesWritten - dataBytes;
 
-        int part = 1;
         byte[] copyBuffer = new byte[1024 * 1024];
 
-        while (remainingSeconds > 0) {
-            long partSeconds = Math.min(remainingSeconds, 3600);
-            long partBytes = partSeconds * SAMPLE_RATE * BYTES_PER_FRAME;
-            File wav = new File(outDir, String.format(Locale.US, "part_%02d_%ds_float32_mono_48k.wav", part, partSeconds));
-
-            try (WavWriter writer = new WavWriter(wav, SAMPLE_RATE, CHANNELS, 32, true)) {
-                copyLogicalRange(absoluteStartByte, partBytes, copyBuffer, writer);
-            }
-
-            absoluteStartByte += partBytes;
-            remainingSeconds -= partSeconds;
-            part++;
+        // Canonical export: one contiguous raw file, never split.
+        File raw = new File(outDir, "audio_float32le_mono_48000.raw");
+        try (OutputStream out = new FileOutputStream(raw)) {
+            copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
         }
 
-        File manifest = new File(outDir, "manifest.txt");
-        try (RandomAccessFile m = new RandomAccessFile(manifest, "rw")) {
-            m.setLength(0);
-            m.write(("sample_rate=48000\nchannels=1\nformat=float32_le\nseconds=" + seconds + "\n").getBytes());
+        // Convenience WAV only when standard WAV can represent it as one file.
+        boolean wroteWav = false;
+        if (dataBytes <= MAX_STANDARD_WAV_DATA_BYTES) {
+            File wav = new File(outDir, "audio_float32le_mono_48000.wav");
+            try (WavWriter writer = new WavWriter(wav, SAMPLE_RATE, CHANNELS, 32, true)) {
+                copyLogicalRangeToWav(absoluteStartByte, dataBytes, copyBuffer, writer);
+            }
+            wroteWav = true;
+        }
+
+        File manifest = new File(outDir, "manifest.json");
+        String json = "{\n" +
+                "  \"container\": \"raw\",\n" +
+                "  \"canonicalFile\": \"audio_float32le_mono_48000.raw\",\n" +
+                "  \"sampleRate\": 48000,\n" +
+                "  \"channels\": 1,\n" +
+                "  \"sampleFormat\": \"float32\",\n" +
+                "  \"endianness\": \"little\",\n" +
+                "  \"bytesPerSample\": 4,\n" +
+                "  \"bytesPerFrame\": 4,\n" +
+                "  \"durationSeconds\": " + seconds + ",\n" +
+                "  \"dataBytes\": " + dataBytes + ",\n" +
+                "  \"standardWavAlsoWritten\": " + wroteWav + ",\n" +
+                "  \"note\": \"The .raw file is one contiguous unsplit export copied directly from the circular PCM buffer. Import as raw PCM float32 little-endian mono 48000 Hz.\"\n" +
+                "}\n";
+
+        try (OutputStream m = new FileOutputStream(manifest)) {
+            m.write(json.getBytes("UTF-8"));
         }
 
         return outDir;
     }
 
-    private void copyLogicalRange(long absoluteStartByte, long bytes, byte[] buf, WavWriter writer) throws IOException {
+    private void copyLogicalRangeToStream(long absoluteStartByte, long bytes, byte[] buf, OutputStream out) throws IOException {
+        long copied = 0;
+        while (copied < bytes) {
+            long logical = absoluteStartByte + copied;
+            long pos = mod(logical, capacityBytes);
+            int n = (int) Math.min(Math.min(buf.length, bytes - copied), capacityBytes - pos);
+            raf.seek(pos);
+            raf.readFully(buf, 0, n);
+            out.write(buf, 0, n);
+            copied += n;
+        }
+    }
+
+    private void copyLogicalRangeToWav(long absoluteStartByte, long bytes, byte[] buf, WavWriter writer) throws IOException {
         long copied = 0;
         while (copied < bytes) {
             long logical = absoluteStartByte + copied;

@@ -29,3 +29,14 @@ This project includes a GitHub Actions workflow that can build the APK in the cl
 - Android may show warnings because the APK is not from the Play Store.
 - The app uses a foreground microphone service, so Android should show a persistent notification and microphone privacy indicator.
 - The app preallocates about 5.15 GiB for the 8-hour float32 mono buffer.
+
+
+## Where saved recordings appear
+
+After pressing a save button in the app, open:
+
+```text
+Files app → Downloads → AudioDashcam
+```
+
+Each save has its own timestamped folder containing one unsplit `.raw` file and a `manifest.json` file.

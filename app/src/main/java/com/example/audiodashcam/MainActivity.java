@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
         }
 
         TextView note = new TextView(this);
-        note.setText("\nSaved WAV files are written under Android/data/com.example.audiodashcam/files/saved. Large saves are split into one-hour WAV parts.");
+        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Each save contains one unsplit .raw file plus manifest.json. A .wav convenience copy is created only when it fits standard WAV limits.");
         root.addView(note);
 
         setContentView(scroll);
