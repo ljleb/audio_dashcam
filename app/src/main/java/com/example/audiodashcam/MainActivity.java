@@ -82,9 +82,18 @@ public class MainActivity extends Activity {
         root.addView(status);
 
         long[] durations = {
-                5, 15, 30, 60,
-                5 * 60, 15 * 60, 30 * 60,
-                60 * 60, 5 * 60 * 60, 8 * 60 * 60
+                5,
+                15,
+                30,
+                60,
+
+                5 * 60,
+                15 * 60,
+                30 * 60,
+
+                60 * 60,
+                4 * 60 * 60,
+                8 * 60 * 60
         };
 
         for (long s : durations) {
