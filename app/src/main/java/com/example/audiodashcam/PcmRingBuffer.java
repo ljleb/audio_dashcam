@@ -79,29 +79,33 @@ final class PcmRingBuffer {
 
         long dataBytes = seconds * SAMPLE_RATE * BYTES_PER_FRAME;
         long absoluteStartByte = totalBytesWritten - dataBytes;
-
         byte[] copyBuffer = new byte[1024 * 1024];
 
-        // Canonical export: one contiguous raw file, never split.
-        File raw = new File(outDir, "audio_float32le_mono_48000.raw");
-        try (OutputStream out = new FileOutputStream(raw)) {
-            copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
-        }
+        String audioFileName;
+        String container;
 
-        // Convenience WAV only when standard WAV can represent it as one file.
-        boolean wroteWav = false;
         if (dataBytes <= MAX_STANDARD_WAV_DATA_BYTES) {
-            File wav = new File(outDir, "audio_float32le_mono_48000.wav");
+            // Default path: one WAV file. This stores the same float32 PCM data with only a small header.
+            audioFileName = "audio_float32le_mono_48000.wav";
+            container = "wav";
+            File wav = new File(outDir, audioFileName);
             try (WavWriter writer = new WavWriter(wav, SAMPLE_RATE, CHANNELS, 32, true)) {
                 copyLogicalRangeToWav(absoluteStartByte, dataBytes, copyBuffer, writer);
             }
-            wroteWav = true;
+        } else {
+            // Fallback path: one raw file, because standard WAV cannot represent this much data.
+            audioFileName = "audio_float32le_mono_48000.raw";
+            container = "raw";
+            File raw = new File(outDir, audioFileName);
+            try (OutputStream out = new FileOutputStream(raw)) {
+                copyLogicalRangeToStream(absoluteStartByte, dataBytes, copyBuffer, out);
+            }
         }
 
         File manifest = new File(outDir, "manifest.json");
         String json = "{\n" +
-                "  \"container\": \"raw\",\n" +
-                "  \"canonicalFile\": \"audio_float32le_mono_48000.raw\",\n" +
+                "  \"container\": \"" + container + "\",\n" +
+                "  \"audioFile\": \"" + audioFileName + "\",\n" +
                 "  \"sampleRate\": 48000,\n" +
                 "  \"channels\": 1,\n" +
                 "  \"sampleFormat\": \"float32\",\n" +
@@ -110,8 +114,7 @@ final class PcmRingBuffer {
                 "  \"bytesPerFrame\": 4,\n" +
                 "  \"durationSeconds\": " + seconds + ",\n" +
                 "  \"dataBytes\": " + dataBytes + ",\n" +
-                "  \"standardWavAlsoWritten\": " + wroteWav + ",\n" +
-                "  \"note\": \"The .raw file is one contiguous unsplit export copied directly from the circular PCM buffer. Import as raw PCM float32 little-endian mono 48000 Hz.\"\n" +
+                "  \"note\": \"Exactly one audio payload is written. WAV is used when standard WAV can fit the data; otherwise raw PCM is used.\"\n" +
                 "}\n";
 
         try (OutputStream m = new FileOutputStream(manifest)) {

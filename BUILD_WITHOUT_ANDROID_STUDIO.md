@@ -39,4 +39,4 @@ After pressing a save button in the app, open:
 Files app → Downloads → AudioDashcam
 ```
 
-Each save has its own timestamped folder containing one unsplit `.raw` file and a `manifest.json` file.
+Each save has its own timestamped folder containing exactly one audio file plus `manifest.json`: `.wav` by default, `.raw` only when the save is too large for standard WAV.

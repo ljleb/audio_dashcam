@@ -10,8 +10,9 @@ Minimal Android app that records a perpetual rolling audio buffer.
 - Preallocated 8-hour circular buffer.
 - Approximate ring size: 5.15 GiB.
 - Save buttons for 5s, 15s, 30s, 1m, 5m, 15m, 30m, 1h, 5h, 8h.
-- Saves one unsplit raw float32 file plus `manifest.json` to public Downloads/AudioDashcam via MediaStore.
-- Also writes a single convenience WAV only when the export fits standard WAV limits.
+- Saves exactly one audio payload to public Downloads/AudioDashcam via MediaStore.
+- Uses one float32 WAV by default.
+- Falls back to one raw float32 file only when the save is too large for standard WAV.
 
 ## Build
 
@@ -41,12 +42,12 @@ Open the Android Files app, then go to:
 Downloads/AudioDashcam/<timestamp>_last-<duration>s/
 ```
 
-Each save contains `audio_float32le_mono_48000.raw` plus `manifest.json`. For shorter saves, it may also contain `audio_float32le_mono_48000.wav`.
+Each save contains exactly one audio file plus `manifest.json`: normally `audio_float32le_mono_48000.wav`, or `audio_float32le_mono_48000.raw` for very large saves.
 
 
 ## Importing the raw file
 
-Import `audio_float32le_mono_48000.raw` as raw PCM with these settings:
+If a save falls back to `.raw`, import it as raw PCM with these settings:
 
 ```text
 Encoding/sample format: 32-bit float PCM

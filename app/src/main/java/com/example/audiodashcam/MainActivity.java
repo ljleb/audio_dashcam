@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
         }
 
         TextView note = new TextView(this);
-        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Each save contains one unsplit .raw file plus manifest.json. A .wav convenience copy is created only when it fits standard WAV limits.");
+        note.setText("\nSaved recordings are written to Downloads/AudioDashcam. Each save contains exactly one audio file: .wav by default, or .raw only if the save is too large for standard WAV.");
         root.addView(note);
 
         setContentView(scroll);
