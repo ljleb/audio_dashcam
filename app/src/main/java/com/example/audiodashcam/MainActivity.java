@@ -26,6 +26,13 @@ public class MainActivity extends Activity {
     private boolean userStopped = false;
     private Button recordToggle;
     private TextView status;
+    private final Runnable statusTicker = new Runnable() {
+        @Override public void run() {
+            updateStatus();
+            updateRecordingToggle();
+            if (status != null) status.postDelayed(this, 1000);
+        }
+    };
 
     private final ServiceConnection conn = new ServiceConnection() {
         @Override public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -58,6 +65,16 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         buildUi();
         requestPermissionsIfNeeded();
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (status != null) status.post(statusTicker);
+    }
+
+    @Override protected void onPause() {
+        if (status != null) status.removeCallbacks(statusTicker);
+        super.onPause();
     }
 
     private void buildUi() {
@@ -234,6 +251,7 @@ public class MainActivity extends Activity {
     }
 
     @Override protected void onDestroy() {
+        if (status != null) status.removeCallbacks(statusTicker);
         if (bound) unbindService(conn);
         bound = false;
         super.onDestroy();

@@ -14,6 +14,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.SystemClock;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class RecorderService extends Service {
     private Thread recordThread;
     private PcmRingBuffer ring;
     private String lastStatus = "Idle";
+    private volatile long recordingStartedElapsedMs = 0;
 
     public final class LocalBinder extends Binder {
         RecorderService service() { return RecorderService.this; }
@@ -94,6 +96,7 @@ public class RecorderService extends Service {
 
             try {
                 recorder.startRecording();
+                recordingStartedElapsedMs = SystemClock.elapsedRealtime();
                 lastStatus = "Recording";
                 while (running) {
                     int n = recorder.read(buffer, 0, buffer.length, AudioRecord.READ_BLOCKING);
@@ -104,6 +107,7 @@ public class RecorderService extends Service {
             } catch (Exception e) {
                 lastStatus = "Recording error: " + e.getMessage();
                 running = false;
+                recordingStartedElapsedMs = 0;
                 stopSelf();
             } finally {
                 try { recorder.stop(); } catch (Exception ignored) {}
@@ -145,17 +149,34 @@ public class RecorderService extends Service {
     }
 
     public String status() {
-        return lastStatus + " - buffered " + availableSeconds() + "s";
+        long bufferedSeconds = availableSeconds();
+        if (running && recordingStartedElapsedMs > 0) {
+            long onSeconds = Math.max(0, (SystemClock.elapsedRealtime() - recordingStartedElapsedMs) / 1000);
+            return "Recording - on for " + formatDuration(onSeconds)
+                    + " - buffered " + formatDuration(bufferedSeconds);
+        }
+        return lastStatus + " - buffered " + formatDuration(bufferedSeconds);
     }
 
     @Override public void onDestroy() {
         running = false;
+        recordingStartedElapsedMs = 0;
         if (recordThread != null) {
             try { recordThread.join(500); } catch (InterruptedException ignored) {}
         }
         if (ring != null) ring.close();
         exportExecutor.shutdownNow();
         super.onDestroy();
+    }
+
+    private static String formatDuration(long seconds) {
+        long h = seconds / 3600;
+        long m = (seconds % 3600) / 60;
+        long s = seconds % 60;
+
+        if (h > 0) return h + "h " + m + "m " + s + "s";
+        if (m > 0) return m + "m " + s + "s";
+        return s + "s";
     }
 
     private Notification buildNotification(String text) {
