@@ -156,7 +156,7 @@ public class RecorderService extends Service {
                                 lastStatus = "Microphone temporarily unavailable";
                             }
                             wasSilenced = true;
-                            continue; // Never write synthetic zero samples to the timeline.
+                            continue;
                         }
 
                         if (wasSilenced) {
@@ -222,4 +222,158 @@ public class RecorderService extends Service {
     }
 
     void saveRange(long startFrame, long endFrameExclusive, SaveCallback callback) {
-        if (ring == null¤ì(€€€€€€€€€€€…±±‰…¬¹‘½¹”¡™…±Í”°€‰I•½É‘•È¹½ÐÉ•…‘äˆ¤ì(€€€€€€€€€€€É•ÑÕÉ¸ì(€€€€€€€ô(€€€€€€€¥½á•ÕÑ½È¹•á•ÕÑ”  ¤€´øì(€€€€€€€€€€€ÑÉäì(€€€€€€€€€€€€€€€MÑÉ¥¹œÉ•ÍÕ±Ð€ô±¥ÁÌ¹Í…Ù•I…¹”¡É¥¹œ°ÍÑ…ÉÑÉ…µ”°•¹‘É…µ•á±ÕÍ¥Ù”¤ì(€€€€€€€€€€€€€€€±…ÍÑMÑ…ÑÕÌ€ô€‰M…Ù•ˆì(€€€€€€€€€€€€€€€…±±‰…¬¹‘½¹”¡ÑÉÕ”°É•ÍÕ±Ð¤ì(€€€€€€€€€€€ô…Ñ €¡á•ÁÑ¥½¸”¤ì(€€€€€€€€€€€€€€€…±±‰…¬¹‘½¹”¡™…±Í”°”¹•Ñ5•ÍÍ…” ¤¤ì(€€€€€€€€€€€ô(€€€€€€€ô¤ì(€€€ô((€€€Ù½¥ÍÑ…ÉÑA±…å‰…¬¡±½¹œÍÑ…ÉÑÉ…µ”¤ì(€€€€€€€ÍÑ½ÁA±…å‰…¬ ¤ì(€€€€€€€¥˜€¡É¥¹œ€ôô¹Õ±°¤É•ÑÕÉ¸ì(€€€€€€€Á±…å‰…­IÕ¹¹¥¹œ€ôÑÉÕ”ì(€€€€€€€Á±…å‰…­É…µ”€ô5…Ñ ¹µ…à¡ÍÑ…ÉÑÉ…µ”°É¥¹œ¹•…É±¥•ÍÑÉ…µ” ¤¤ì(€€€€€€€Á±…å‰…­Q¡É•…€ô¹•ÜQ¡É•…  ¤€´øì(€€€€€€€€€€€Õ‘¥½QÉ…¬ÑÉ…¬€ô¹Õ±°ì(€€€€€€€€€€€¥¹ÐÕÉÉ•¹Ñ¡…¹¹•±Ì€ô€Àì(€€€€€€€€€€€ÑÉäì(€€€€€€€€€€€€€€€Ý¡¥±”€¡Á±…å‰…­IÕ¹¹¥¹œ€˜˜Á±…å‰…­É…µ”€ðÉ¥¹œ¹±…Ñ•ÍÑÉ…µ•á±ÕÍ¥Ù” ¤¤ì(€€€€€€€€€€€€€€€€€€€AµI¥¹	Õ™™•È¹Õ‘¥½¡Õ¹¬¡Õ¹¬€ôÉ¥¹œ¹É•…‘¡Õ¹¬¡Á±…å‰…­É…µ”°€ÐÀäØ¤ì(€€€€€€€€€€€€€€€€€€€¥˜€¡¡Õ¹¬€ôô¹Õ±°ñð¡Õ¹¬¹™É…µ•½Õ¹Ð€ðô€À¤‰É•…¬ì((€€€€€€€€€€€€€€€€€€€¥˜€¡ÑÉ…¬€ôô¹Õ±°ñðÕÉÉ•¹Ñ¡…¹¹•±Ì€„ô¡Õ¹¬¹¡…¹¹•±Ì¤ì(€€€€€€€€€€€€€€€€€€€€€€€¥˜€¡ÑÉ…¬€„ô¹Õ±°¤ì(€€€€€€€€€€€€€€€€€€€€€€€€€€€ÑÉäìÑÉ…¬¹ÍÑ½À ¤ìô…Ñ €¡á•ÁÑ¥½¸¥¹½É•¤íô(€€€€€€€€€€€€€€€€€€€€€€€€€€€ÑÉ…¬¹É•±•…Í” ¤ì(€€€€€€€€€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€€€€€€€€€€€€ÕÉÉ•¹Ñ¡…¹¹•±Ì€ô¡Õ¹¬¹¡…¹¹•±Ìì(€€€€€€€€€€€€€€€€€€€€€€€¥¹Ð½ÕÑ5…Í¬€ôÕÉÉ•¹Ñ¡…¹¹•±Ì€ôô€È€üÕ‘¥½½Éµ…Ð¹!991}=UQ}MQI<€èÕ‘¥½½Éµ…Ð¹!991}=UQ}5=9<ì(€€€€€€€€€€€€€€€€€€€€€€€¥¹Ðµ¥¸€ôÕ‘¥½QÉ…¬¹•Ñ5¥¹	Õ™™•ÉM¥é”¡Õ‘¥½AÉ½™¥±”¹M5A1}IQ°½ÕÑ5…Í¬°Õ‘¥½½Éµ…Ð¹9=%9}A5}1=P¤ì(€€€€€€€€€€€€€€€€€€€€€€€ÑÉ…¬€ô¹•ÜÕ‘¥½QÉ…¬¹	Õ¥±‘•È ¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•ÑÕ‘¥½ÑÑÉ¥‰ÕÑ•Ì¡¹•ÜÕ‘¥½ÑÑÉ¥‰ÕÑ•Ì¹	Õ¥±‘•È ¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•ÑUÍ…”¡Õ‘¥½ÑÑÉ¥‰ÕÑ•Ì¹UM}5%¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•Ñ½¹Ñ•¹ÑQåÁ”¡Õ‘¥½ÑÑÉ¥‰ÕÑ•Ì¹=9Q9Q}QeA}5UM%¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹‰Õ¥± ¤¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•ÑÕ‘¥½½Éµ…Ð¡¹•ÜÕ‘¥½½Éµ…Ð¹	Õ¥±‘•È ¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•ÑM…µÁ±•I…Ñ”¡Õ‘¥½AÉ½™¥±”¹M5A1}IQ¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•Ñ¡…¹¹•±5…Í¬¡½ÕÑ5…Í¬¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•Ñ¹½‘¥¹œ¡Õ‘¥½½Éµ…Ð¹9=%9}A5}1=P¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹‰Õ¥± ¤¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•Ñ	Õ™™•ÉM¥é•%¹	åÑ•Ì¡5…Ñ ¹µ…à¡µ¥¸°€ÐÀäØ€¨ÕÉÉ•¹Ñ¡…¹¹•±Ì€¨€Ð¤¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹Í•ÑQÉ…¹Í™•É5½‘”¡Õ‘¥½QÉ…¬¹5=}MQI4¤(€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€¹‰Õ¥± ¤ì(€€€€€€€€€€€€€€€€€€€€€€€ÑÉ…¬¹Á±…ä ¤ì(€€€€€€€€€€€€€€€€€€€ô((€€€€€€€€€€€€€€€€€€€¥¹ÐÝÉ¥ÑÑ•¸€ôÑÉ…¬¹ÝÉ¥Ñ”¡¡Õ¹¬¹¥¹Ñ•É±•…Ù•°€À°¡Õ¹¬¹¥¹Ñ•É±•…Ù•¹±•¹Ñ °Õ‘¥½QÉ…¬¹]I%Q}	1=-%9¤ì(€€€€€€€€€€€€€€€€€€€¥˜€¡ÝÉ¥ÑÑ•¸€ð€À¤‰É•…¬ì(€€€€€€€€€€€€€€€€€€€Á±…å‰…­É…µ”€¬ô¡Õ¹¬¹™É…µ•½Õ¹Ðì(€€€€€€€€€€€€€€€ô(€€€€€€€€€€€ô…Ñ €¡á•ÁÑ¥½¸”¤ì(€€€€€€€€€€€€€€€±…ÍÑMÑ…ÑÕÌ€ô€‰A±…å‰…¬•ÉÉ½Èè€ˆ€¬”¹•Ñ5•ÍÍ…” ¤ì(€€€€€€€€€€€ô™¥¹…±±äì(€€€€€€€€€€€€€€€¥˜€¡ÑÉ…¬€„ô¹Õ±°¤ì(€€€€€€€€€€€€€€€€€€€ÑÉäìÑÉ…¬¹ÍÑ½À ¤ìô…Ñ €¡á•ÁÑ¥½¸¥¹½É•¤íô(€€€€€€€€€€€€€€€€€€€ÑÉ…¬¹É•±•…Í” ¤ì(€€€€€€€€€€€€€€€ô(€€€€€€€€€€€€€€€Á±…å‰…­IÕ¹¹¥¹œ€ô™…±Í”ì(€€€€€€€€€€€ô(€€€€€€€ô°€‰Õ‘¥½…Í¡…µA±…å‰…¬ˆ¤ì(€€€€€€€Á±…å‰…­Q¡É•…¹ÍÑ…ÉÐ ¤ì(€€€ô((€€€Ù½¥ÍÑ½ÁA±…å‰…¬ ¤ì(€€€€€€€Á±…å‰…­IÕ¹¹¥¹œ€ô™…±Í”ì(€€€€€€€Q¡É•…Ð€ôÁ±…å‰…­Q¡É•…ì(€€€€€€€¥˜€¡Ð€„ô¹Õ±°¤ì(€€€€€€€€€€€Ð¹¥¹Ñ•ÉÉÕÁÐ ¤ì(€€€€€€€€€€€ÑÉäìÐ¹©½¥¸ ÈÔÀ¤ìô…Ñ €¡%¹Ñ•ÉÉÕÁÑ•‘á•ÁÑ¥½¸¥¹½É•¤íô(€€€€€€€ô(€€€€€€€Á±…å‰…­Q¡É•…€ô¹Õ±°ì(€€€ô((€€€‰½½±•…¸¥ÍA±…å¥¹œ ¤ìÉ•ÑÕÉ¸Á±…å‰…­IÕ¹¹¥¹œìô(€€€±½¹œÁ±…å‰…­É…µ” ¤ìÉ•ÑÕÉ¸Á±…å‰…­É…µ”ìô((€€€MÑÉ¥¹œÍÑ…ÑÕÌ ¤ì(€€€€€€€¥˜€¡É¥¹œ€ôô¹Õ±°¤É•ÑÕÉ¸±…ÍÑMÑ…ÑÕÌì(€€€€€€€‘½Õ‰±”Í•½¹‘Ì€ôÉ¥¹œ¹É•Ñ…¥¹•‘I•½É‘•‘M•½¹‘Ì ¤ì(€€€€€€€MÑÉ¥¹œ‘ÕÉ…Ñ¥½¸€ô™½Éµ…ÑÕÉ…Ñ¥½¸ ¡±½¹œ¤Í•½¹‘Ì¤ì(€€€€€€€MÑÉ¥¹œ‰åÑ•Ì€ôAµI¥¹	Õ™™•È¹¡Õµ…¸¡É¥¹œ¹ÕÍ•‘	åÑ•Ì ¤¤ì(€€€€€€€¥˜€¡ÉÕ¹¹¥¹œ€˜˜É•½É‘¥¹MÑ…ÉÑ•‘±…ÁÍ•‘5Ì€ø€À¤ì(€€€€€€€€€€€±½¹œ½¸€ô5…Ñ ¹µ…à À°€¡MåÍÑ•µ±½¬¹•±…ÁÍ•‘I•…±Ñ¥µ” ¤€´É•½É‘¥¹MÑ…ÉÑ•‘±…ÁÍ•‘5Ì¤€¼€ÄÀÀÀ¤ì(€€€€€€€€€€€É•ÑÕÉ¸±…ÍÑMÑ…ÑÕÌ€¬€ˆƒŠˆÍ•ÍÍ¥½¸€ˆ€¬™½Éµ…ÑÕÉ…Ñ¥½¸¡½¸¤€¬€ˆƒŠˆÉ•Ñ…¥¹•€ˆ€¬‘ÕÉ…Ñ¥½¸€¬€ˆ€¼€ˆ€¬‰åÑ•Ìì(€€€€€€€ô(€€€€€€€É•ÑÕÉ¸±…ÍÑMÑ…ÑÕÌ€¬€ˆƒŠˆÉ•Ñ…¥¹•€ˆ€¬‘ÕÉ…Ñ¥½¸€¬€ˆ€¼€ˆ€¬‰åÑ•Ìì(€€€ô((€€€=Ù•ÉÉ¥‘”ÁÕ‰±¥ŒÙ½¥½¹Q…Í­I•µ½Ù•¡%¹Ñ•¹ÐÉ½½Ñ%¹Ñ•¹Ð¤ì(€€€€€€€€¼¼…¹‘É½¥éÍÑ½Á]¥Ñ¡Q…Í¬¡…¹‘±•ÌÑ¡”¹½Éµ…°Á…Ñ ì•áÁ±¥¥Ñ±äÍÑ½ÁÁ¥¹œµ…­•ÌÑ¡”(€€€€€€€€¼¼ÕÍ•ÈµÙ¥Í¥‰±”½¹ÑÉ…ÐÕ¹…µ‰¥Õ½ÕÌ½¸=4Ù…É¥…¹ÑÌ¸(€€€€€€€ÍÑ½ÁM•±˜ ¤ì(€€€€€€€ÍÕÁ•È¹½¹Q…Í­I•µ½Ù•¡É½½Ñ%¹Ñ•¹Ð¤ì(€€€ô((€€€=Ù•ÉÉ¥‘”ÁÕ‰±¥ŒÙ½¥½¹•ÍÑÉ½ä ¤ì(€€€€€€€ÉÕ¹¹¥¹œ€ô™…±Í”ì(€€€€€€€É•ÍÑ…ÉÑ…ÁÑÕÉ”€ô™…±Í”ì(€€€€€€€ÍÑ½ÁA±…å‰…¬ ¤ì(€€€€€€€Q¡É•…Ð€ôÉ•½É‘Q¡É•…ì(€€€€€€€¥˜€¡Ð€„ô¹Õ±°¤ì(€€€€€€€€€€€Ð¹¥¹Ñ•ÉÉÕÁÐ ¤ì(€€€€€€€€€€€ÑÉäìÐ¹©½¥¸ ÔÀÀ¤ìô…Ñ €¡%¹Ñ•ÉÉÕÁÑ•‘á•ÁÑ¥½¸¥¹½É•¤íô(€€€€€€€ô(€€€€€€€¥˜€¡É¥¹œ€„ô¹Õ±°¤É¥¹œ¹±½Í” ¤ì(€€€€€€€¥½á•ÕÑ½È¹Í¡ÕÑ‘½Ý¹9½Ü ¤ì(€€€€€€€ÍÕÁ•È¹½¹•ÍÑÉ½ä ¤ì(€€€ô((€€€ÁÉ¥Ù…Ñ”9½Ñ¥™¥…Ñ¥½¸‰Õ¥±‘9½Ñ¥™¥…Ñ¥½¸¡MÑÉ¥¹œÑ•áÐ¤ì(€€€€€€€%¹Ñ•¹Ð¥¹Ñ•¹Ð€ô¹•Ü%¹Ñ•¹Ð¡Ñ¡¥Ì°5…¥¹Ñ¥Ù¥Ñä¹±…ÍÌ¤ì(€€€€€€€A•¹‘¥¹%¹Ñ•¹ÐÁ¤€ôA•¹‘¥¹%¹Ñ•¹Ð¹•ÑÑ¥Ù¥Ñä¡Ñ¡¥Ì°€À°¥¹Ñ•¹Ð°(€€€€€€€€€€€€€€€A•¹‘¥¹%¹Ñ•¹Ð¹1}%55UQ	1ðA•¹‘¥¹%¹Ñ•¹Ð¹1}UAQ}UII9P¤ì(€€€€€€€É•ÑÕÉ¸¹•Ü9½Ñ¥™¥…Ñ¥½¸¹	Õ¥±‘•È¡Ñ¡¥Ì°!991}%¤(€€€€€€€€€€€€€€€€¹Í•Ñ½¹Ñ•¹ÑQ¥Ñ±” ‰Õ‘¥¼…Í¡…´ˆ¤(€€€€€€€€€€€€€€€€¹Í•Ñ½¹Ñ•¹ÑQ•áÐ¡Ñ•áÐ¤(€€€€€€€€€€€€€€€€¹Í•ÑMµ…±±%½¸¡…¹‘É½¥¹H¹‘É…Ý…‰±”¹¥}‰Ñ¹}ÍÁ•…­}¹½Ü¤(€€€€€€€€€€€€€€€€¹Í•Ñ½¹Ñ•¹Ñ%¹Ñ•¹Ð¡Á¤¤(€€€€€€€€€€€€€€€€¹Í•Ñ=¹½¥¹œ¡ÑÉÕ”¤(€€€€€€€€€€€€€€€€¹Í•Ñ=¹±å±•ÉÑ=¹”¡ÑÉÕ”¤(€€€€€€€€€€€€€€€€¹Í•Ñ…Ñ•½Éä¡9½Ñ¥™¥…Ñ¥½¸¹Q=Ie}MIY%¤(€€€€€€€€€€€€€€€€¹‰Õ¥± ¤ì(€€€ô((€€€ÁÉ¥Ù…Ñ”Ù½¥É•…Ñ•9½Ñ¥™¥…Ñ¥½¹¡…¹¹•° ¤ì(€€€€€€€9½Ñ¥™¥…Ñ¥½¹¡…¹¹•°¡…¹¹•°€ô¹•Ü9½Ñ¥™¥…Ñ¥½¹¡…¹¹•° (€€€€€€€€€€€€€€€!991}%°(€€€€€€€€€€€€€€€€‰Ñ¥Ù”É•½É‘•Èˆ°(€€€€€€€€€€€€€€€9½Ñ¥™¥…Ñ¥½¹5…¹…•È¹%5A=IQ9}1=\(€€€€€€€€¤ì(€€€€€€€¡…¹¹•°¹Í•Ñ•ÍÉ¥ÁÑ¥½¸ ‰I•ÅÕ¥É•™½É•É½Õ¹µÍ•ÉÙ¥”¥¹‘¥…Ñ½ÈÝ¡¥±”Õ‘¥¼…Í¡…´É•½É‘Ìˆ¤ì(€€€€€€€¡…¹¹•°¹Í•ÑM½Õ¹¡¹Õ±°°¹Õ±°¤ì(€€€€€€€¡…¹¹•°¹•¹…‰±•Y¥‰É…Ñ¥½¸¡™…±Í”¤ì(€€€€€€€•ÑMåÍÑ•µM•ÉÙ¥”¡9½Ñ¥™¥…Ñ¥½¹5…¹…•È¹±…ÍÌ¤¹É•…Ñ•9½Ñ¥™¥…Ñ¥½¹¡…¹¹•°¡¡…¹¹•°¤ì(€€€ô((€€€ÁÉ¥Ù…Ñ”ÍÑ…Ñ¥ŒMÑÉ¥¹œ™½Éµ…ÑÕÉ…Ñ¥½¸¡±½¹œÍ•½¹‘Ì¤ì(€€€€€€€±½¹œ €ôÍ•½¹‘Ì€¼€ÌØÀÀì(€€€€€€€±½¹œ´€ô€¡Í•½¹‘Ì€”€ÌØÀÀ¤€¼€ØÀì(€€€€€€€±½¹œÌ€ôÍ•½¹‘Ì€”€ØÀì(€€€€€€€¥˜€¡ €ø€À¤É•ÑÕÉ¸ €¬€‰ €ˆ€¬´€¬€‰´€ˆ€¬Ì€¬€‰Ìˆì(€€€€€€€¥˜€¡´€ø€À¤É•ÑÕÉ¸´€¬€‰´€ˆ€¬Ì€¬€‰Ìˆì(€€€€€€€É•ÑÕÉ¸Ì€¬€‰Ìˆì(€€€ô((€€€ÁÕ‰±¥Œ¥¹Ñ•É™…”M…Ù•…±±‰…¬ì(€€€€€€€Ù½¥‘½¹”¡‰½½±•…¸½¬°MÑÉ¥¹œµ•ÍÍ…”¤ì(€€€ô)ô
+        if (ring == null) {
+            callback.done(false, "Recorder not ready");
+            return;
+        }
+        ioExecutor.execute(() -> {
+            try {
+                String result = clips.saveRange(ring, startFrame, endFrameExclusive);
+                lastStatus = "Saved";
+                callback.done(true, result);
+            } catch (Exception e) {
+                callback.done(false, e.getMessage());
+            }
+        });
+    }
+
+    void startPlayback(long startFrame) {
+        stopPlayback();
+        if (ring == null) return;
+        playbackRunning = true;
+        playbackFrame = Math.max(startFrame, ring.earliestFrame());
+        playbackThread = new Thread(() -> {
+            AudioTrack track = null;
+            int currentChannels = 0;
+            try {
+                while (playbackRunning && playbackFrame < ring.latestFrameExclusive()) {
+                    PcmRingBuffer.AudioChunk chunk = ring.readChunk(playbackFrame, 4096);
+                    if (chunk == null || chunk.frameCount <= 0) break;
+
+                    if (track == null || currentChannels != chunk.channels) {
+                        if (track != null) {
+                            try { track.stop(); } catch (Exception ignored) {}
+                            track.release();
+                        }
+                        currentChannels = chunk.channels;
+                        int outMask = currentChannels == 2 ? AudioFormat.CHANNEL_OUT_STEREO : AudioFormat.CHANNEL_OUT_MONO;
+                        int min = AudioTrack.getMinBufferSize(AudioProfile.SAMPLE_RATE, outMask, AudioFormat.ENCODING_PCM_FLOAT);
+                        track = new AudioTrack.Builder()
+                                .setAudioAttributes(new AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                        .build())
+                                .setAudioFormat(new AudioFormat.Builder()
+                                        .setSampleRate(AudioProfile.SAMPLE_RATE)
+                                        .setChannelMask(outMask)
+                                        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+                                        .build())
+                                .setBufferSizeInBytes(Math.max(min, 4096 * currentChannels * 4))
+                                .setTransferMode(AudioTrack.MODE_STREAM)
+                                .build();
+                        track.play();
+                    }
+
+                    int written = track.write(chunk.interleaved, 0, chunk.interleaved.length, AudioTrack.WRITE_BLOCKING);
+                    if (written < 0) break;
+                    playbackFrame += chunk.frameCount;
+                }
+            } catch (Exception e) {
+                lastStatus = "Playback error: " + e.getMessage();
+            } finally {
+                if (track != null) {
+                    try { track.stop(); } catch (Exception ignored) {}
+                    track.release();
+                }
+                playbackRunning = false;
+            }
+        }, "AudioDashcamPlayback");
+        playbackThread.start();
+    }
+
+    void stopPlayback() {
+        playbackRunning = false;
+        Thread t = playbackThread;
+        if (t != null) {
+            t.interrupt();
+            try { t.join(250); } catch (InterruptedException ignored) {}
+        }
+        playbackThread = null;
+    }
+
+    boolean isPlaying() { return playbackRunning; }
+    long playbackFrame() { return playbackFrame; }
+
+    String status() {
+        if (ring == null) return lastStatus;
+        double seconds = ring.retainedRecordedSeconds();
+        String duration = formatDuration((long) seconds);
+        String bytes = PcmRingBuffer.human(ring.usedBytes());
+        if (running && recordingStartedElapsedMs > 0) {
+            long on = Math.max(0, (SystemClock.elapsedRealtime() - recordingStartedElapsedMs) / 1000);
+            return lastStatus + " â€¢ session " + formatDuration(on) + " â€¢ retained " + duration + " / " + bytes;
+        }
+        return lastStatus + " â€¢ retained " + duration + " / " + bytes;
+    }
+
+    @Override public void onTaskRemoved(Intent rootIntent) {
+        // android:stopWithTask handles the normal path; explicitly stopping makes the
+        // user-visible contract unambiguous on OEM variants.
+        stopSelf();
+        super.onTaskRemoved(rootIntent);
+    }
+
+    @Override public void onDestroy() {
+        running = false;
+        restartCapture = false;
+        stopPlayback();
+        Thread t = recordThread;
+        if (t != null) {
+            t.interrupt();
+            try { t.join(500); } catch (InterruptedException ignored) {}
+        }
+        if (ring != null) ring.close();
+        ioExecutor.shutdownNow();
+        super.onDestroy();
+    }
+
+    private Notification buildNotification(String text) {
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        return new Notification.Builder(this, CHANNEL_ID)
+                .setContentTitle("Audio Dashcam")
+                .setContentText(text)
+                .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+                .setContentIntent(pi)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+    }
+
+    private void createNotificationChannel() {
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Active recorder",
+                NotificationManager.IMPORTANCE_LOW
+        );
+        channel.setDescription("Required foreground-service indicator while Audio Dashcam records");
+        channel.setSound(null, null);
+        channel.enableVibration(false);
+        getSystemService(NotificationManager.class).createNotificationChannel(channel);
+    }
+
+    private static String formatDuration(long seconds) {
+        long h = seconds / 3600;
+        long m = (seconds % 3600) / 60;
+        long s = seconds % 60;
+        if (h > 0) return h + "h " + m + "m " + s + "s";
+        if (m > 0) return m + "m " + s + "s";
+        return s + "s";
+    }
+
+    public interface SaveCallback {
+        void done(boolean ok, String message);
+    }
+}
