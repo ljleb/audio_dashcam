@@ -1,40 +1,18 @@
 package com.example.audiodashcam;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 
-final class WavWriter implements AutoCloseable {
-    private final RandomAccessFile raf;
-    private long dataBytes = 0;
-
-    WavWriter(File file, int sampleRate, int channels, int bitsPerSample, boolean ieeeFloat) throws IOException {
-        raf = new RandomAccessFile(file, "rw");
-        raf.setLength(0);
-        writeHeader(sampleRate, channels, bitsPerSample, ieeeFloat, 0);
-    }
-
-    void write(byte[] data, int offset, int length) throws IOException {
-        raf.write(data, offset, length);
-        dataBytes += length;
-    }
-
-    @Override public void close() throws IOException {
-        long cur = raf.getFilePointer();
-        raf.seek(0);
-        writeHeader(48000, 1, 32, true, dataBytes);
-        raf.seek(cur);
-        raf.close();
-    }
+final class WavWriter {
+    private WavWriter() {}
 
     static void writeHeader(OutputStream out, int sampleRate, int channels, int bitsPerSample,
                             boolean ieeeFloat, long dataLen) throws IOException {
         if (dataLen > 0xFFFFFFFFL - 44) {
-            throw new IOException("Standard WAV cannot exceed ~4 GiB. Export smaller chunks.");
+            throw new IOException("Standard WAV cannot exceed ~4 GiB of payload");
         }
 
-        int audioFormat = ieeeFloat ? 3 : 1; // 3 = IEEE float, 1 = PCM integer
+        int audioFormat = ieeeFloat ? 3 : 1;
         int byteRate = sampleRate * channels * bitsPerSample / 8;
         int blockAlign = channels * bitsPerSample / 8;
         long riffSize = 36 + dataLen;
@@ -54,29 +32,38 @@ final class WavWriter implements AutoCloseable {
         writeLE32(out, (int) dataLen);
     }
 
-    private void writeHeader(int sampleRate, int channels, int bitsPerSample, boolean ieeeFloat, long dataLen) throws IOException {
-        if (dataLen > 0xFFFFFFFFL - 44) {
-            throw new IOException("Standard WAV cannot exceed ~4 GiB. Export smaller chunks.");
+    static long headerSizeFor(long dataLen) { return dataLen <= 0xFFFFFFFFL - 44 ? 44L : 80L; }
+
+    static void writeLosslessHeader(OutputStream out, int sampleRate, int channels, long dataLen) throws IOException {
+        if (dataLen <= 0xFFFFFFFFL - 44) {
+            writeHeader(out, sampleRate, channels, 32, true, dataLen);
+            return;
         }
+        long sampleFrames = dataLen / (channels * 4L);
+        long riffSize = dataLen + 72L;
+        out.write(new byte[]{ 'R', 'F', '6', '4' });
+        writeLE32(out, 0xFFFFFFFF);
+        out.write(new byte[]{ 'W', 'A', 'V', 'E' });
+        out.write(new byte[]{ 'd', 's', '6', '4' });
+        writeLE32(out, 28);
+        writeLE64(out, riffSize);
+        writeLE64(out, dataLen);
+        writeLE64(out, sampleFrames);
+        writeLE32(out, 0);
+        out.write(new byte[]{ 'f', 'm', 't', ' ' });
+        writeLE32(out, 16);
+        writeLE16(out, 3);
+        writeLE16(out, channels);
+        writeLE32(out, sampleRate);
+        writeLE32(out, sampleRate * channels * 4);
+        writeLE16(out, channels * 4);
+        writeLE16(out, 32);
+        out.write(new byte[]{ 'd', 'a', 't', 'a' });
+        writeLE32(out, 0xFFFFFFFF);
+    }
 
-        int audioFormat = ieeeFloat ? 3 : 1; // 3 = IEEE float, 1 = PCM integer
-        int byteRate = sampleRate * channels * bitsPerSample / 8;
-        int blockAlign = channels * bitsPerSample / 8;
-        long riffSize = 36 + dataLen;
-
-        raf.writeBytes("RIFF");
-        writeLE32((int) riffSize);
-        raf.writeBytes("WAVE");
-        raf.writeBytes("fmt ");
-        writeLE32(16);
-        writeLE16(audioFormat);
-        writeLE16(channels);
-        writeLE32(sampleRate);
-        writeLE32(byteRate);
-        writeLE16(blockAlign);
-        writeLE16(bitsPerSample);
-        raf.writeBytes("data");
-        writeLE32((int) dataLen);
+    private static void writeLE64(OutputStream out, long v) throws IOException {
+        for (int i = 0; i < 8; i++) out.write((int) ((v >>> (8 * i)) & 0xff));
     }
 
     private static void writeLE16(OutputStream out, int v) throws IOException {
@@ -89,17 +76,5 @@ final class WavWriter implements AutoCloseable {
         out.write((v >>> 8) & 0xff);
         out.write((v >>> 16) & 0xff);
         out.write((v >>> 24) & 0xff);
-    }
-
-    private void writeLE16(int v) throws IOException {
-        raf.write(v & 0xff);
-        raf.write((v >>> 8) & 0xff);
-    }
-
-    private void writeLE32(int v) throws IOException {
-        raf.write(v & 0xff);
-        raf.write((v >>> 8) & 0xff);
-        raf.write((v >>> 16) & 0xff);
-        raf.write((v >>> 24) & 0xff);
     }
 }
